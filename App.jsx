@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
@@ -8,8 +9,20 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import StartGameScreen from './src/screens/StartGameScreen';
+import GameScreen from './src/screens/GameScreen';
 
 export default function App() {
+  const [gameOn, setGameOn] = useState(false);
+
+  const startGame = () => {
+    console.log('game starts...');
+    setGameOn(true);
+  };
+
+  const showInstructions = () => {
+    console.log('instructions...');
+  };
+
   let activeScreen = (
     <StartGameScreen
       startGame={startGame}
@@ -17,13 +30,9 @@ export default function App() {
     />
   );
 
-  const startGame = () => {
-    console.log('game starts...');
-  };
-
-  const showInstructions = () => {
-    console.log('instructions...');
-  };
+  if (gameOn) {
+    activeScreen = <GameScreen backScreen={() => setGameOn(false)} />;
+  }
 
   return (
     <>
@@ -38,8 +47,10 @@ export default function App() {
           style={styles.appContainerStyle}
           imageStyle={styles.backgroundImage}
         >
-          <View style={styles.container}>
-            <Text style={{ color: '#e3d8d4', fontSize: 32 }}>Game of Dice</Text>
+          <View>
+            {gameOn ? null : (
+              <Text style={styles.mainTextStyle}>Game of Dice</Text>
+            )}
             {activeScreen}
           </View>
         </ImageBackground>
@@ -57,5 +68,9 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     opacity: 0.05,
+  },
+  mainTextStyle: {
+    color: '#e3d8d4',
+    fontSize: 32,
   },
 });
