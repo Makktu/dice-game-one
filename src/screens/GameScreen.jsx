@@ -2,18 +2,27 @@ import { StyleSheet, Text, View, Pressable } from 'react-native';
 import Title from '../components/Title';
 import Dice from '../components/Dice';
 import MainButton from '../components/MainButton';
+import React, { useEffect, useState } from 'react';
 import rollDice from '../helpers/rollDice';
-import React, { useState } from 'react';
+
+const diceRolls = ['one', 'two', 'three', 'four', 'five', 'six'];
 
 export default function GameScreen({ backScreen }) {
-  const [diceOne, setDiceOne] = useState(<Dice />);
-  const [diceTwo, setDiceTwo] = useState(<Dice />);
   const [currentCash, setCurrentCash] = useState(1000);
+  const [diceNumberA, setDiceNumberA] = useState('dice-six');
+  const [diceNumberB, setDiceNumberB] = useState('dice-six');
   const [diceTotal, setDiceTotal] = useState(0);
 
   const rollHandler = () => {
-    setDiceOne(<Dice />);
-    setDiceTwo(<Dice />);
+    // setDiceTotal();
+    diceNumeralA = rollDice(0, 7) - 1;
+    diceNumeralB = rollDice(0, 7) - 1;
+    if (diceNumeralA == diceNumeralB) {
+      console.log('DOUBLE!!!!!!!');
+    }
+    setDiceTotal(diceNumeralA + 1 + (diceNumeralB + 1));
+    setDiceNumberA(`dice-${diceRolls[diceNumeralA]}`);
+    setDiceNumberB(`dice-${diceRolls[diceNumeralB]}`);
   };
 
   return (
@@ -23,14 +32,23 @@ export default function GameScreen({ backScreen }) {
           <Text style={{ color: 'white', fontSize: 36 }}>GameScreen</Text>
         </View>
         <View style={styles.diceDisplay}>
-          {diceOne}
-          {diceTwo}
+          <Dice theNumber={diceNumberA} />
+          <Dice theNumber={diceNumberB} />
         </View>
         <View>
           <Title>{diceTotal}</Title>
         </View>
         <View>
           <Title>{currentCash}</Title>
+        </View>
+        <View>
+          <Title>1 - 6</Title>
+        </View>
+        <View>
+          <Title>7 - 12</Title>
+        </View>
+        <View>
+          <Title>DOUBLE</Title>
         </View>
         <View style={styles.backButton}>
           <MainButton whenPressed={rollHandler} />
