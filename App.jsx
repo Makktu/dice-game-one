@@ -1,20 +1,61 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Pressable,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import StartGameScreen from './src/screens/StartGameScreen';
 
 export default function App() {
+  let activeScreen = (
+    <StartGameScreen
+      startGame={startGame}
+      showInstructions={showInstructions}
+    />
+  );
+
+  const startGame = () => {
+    console.log('game starts...');
+  };
+
+  const showInstructions = () => {
+    console.log('instructions...');
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={{ color: 'orangered', fontSize: 32 }}>Game of Dice</Text>
-      <StatusBar style='auto' />
-    </View>
+    <>
+      <StatusBar style='light' />
+      <LinearGradient
+        colors={['#363b35', '#12130d']}
+        style={styles.appContainerStyle}
+      >
+        <ImageBackground
+          source={require('./assets/img/background_dice.jpg')}
+          resizeMode='cover'
+          style={styles.appContainerStyle}
+          imageStyle={styles.backgroundImage}
+        >
+          <View style={styles.container}>
+            <Text style={{ color: '#e3d8d4', fontSize: 32 }}>Game of Dice</Text>
+            {activeScreen}
+          </View>
+        </ImageBackground>
+      </LinearGradient>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  appContainerStyle: {
     flex: 1,
-    backgroundColor: '#111010',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  backgroundImage: {
+    opacity: 0.05,
   },
 });
