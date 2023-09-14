@@ -1,16 +1,17 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import React from 'react';
 
-export default function MainButton({ whenPressed }) {
-  if (!whenPressed) {
-    // ! guard clause
-    console.log('BUTTON MISSING SOMETHING');
-  }
+export default function MainButton({ whenPressed, buttonText }) {
   return (
     <Pressable onPress={whenPressed}>
-      <Text>MainButton</Text>
+      <Text style={styles.buttonStyle}>{buttonText}</Text>
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  buttonStyle: {
+    fontSize: 40,
+    color: 'white',
+  },
+});

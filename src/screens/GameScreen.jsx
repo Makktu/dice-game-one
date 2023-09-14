@@ -4,6 +4,7 @@ import Dice from '../components/Dice';
 import MainButton from '../components/MainButton';
 import React, { useEffect, useState } from 'react';
 import rollDice from '../helpers/rollDice';
+import { Audio } from 'expo-av';
 
 const diceRolls = ['one', 'two', 'three', 'four', 'five', 'six'];
 
@@ -12,6 +13,17 @@ export default function GameScreen({ backScreen }) {
   const [diceNumberA, setDiceNumberA] = useState('dice-six');
   const [diceNumberB, setDiceNumberB] = useState('dice-six');
   const [diceTotal, setDiceTotal] = useState(0);
+  const [sound, setSound] = useState();
+
+  async function playSound() {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../../assets/sounds/dice_1.wav')
+    );
+    setSound(sound);
+
+    console.log('Playing Sound');
+    await sound.playAsync();
+  }
 
   const rollHandler = () => {
     // setDiceTotal();
@@ -23,6 +35,7 @@ export default function GameScreen({ backScreen }) {
     setDiceTotal(diceNumeralA + 1 + (diceNumeralB + 1));
     setDiceNumberA(`dice-${diceRolls[diceNumeralA]}`);
     setDiceNumberB(`dice-${diceRolls[diceNumeralB]}`);
+    playSound();
   };
 
   return (
@@ -51,7 +64,7 @@ export default function GameScreen({ backScreen }) {
           <Title>DOUBLE</Title>
         </View>
         <View style={styles.backButton}>
-          <MainButton whenPressed={rollHandler} />
+          <MainButton whenPressed={rollHandler} buttonText={'ROLL!'} />
           <Pressable onPress={backScreen}>
             <Title>Go Back</Title>
           </Pressable>
