@@ -1,4 +1,5 @@
-export default function rollDice() {
-  const roll = Math.floor(Math.random() * 6 + 1);
+export default function rollDice(max, min) {
+  const roll = Math.floor(Math.random() * (max - min + 1)) + min;
+
   return roll;
 }
