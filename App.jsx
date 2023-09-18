@@ -38,7 +38,7 @@ export default function App() {
     <>
       <StatusBar style='light' />
       <LinearGradient
-        colors={['#363b35', '#12130d']}
+        colors={['#35363b', '#020a09']}
         style={styles.appContainerStyle}
       >
         <ImageBackground

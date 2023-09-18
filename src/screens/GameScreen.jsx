@@ -13,17 +13,92 @@ export default function GameScreen({ backScreen }) {
   const [diceTotal, setDiceTotal] = useState(0);
   const [diceNumberA, setDiceNumberA] = useState('dice-six');
   const [diceNumberB, setDiceNumberB] = useState('dice-six');
+  const [lowerBet, setLowerBet] = useState(false);
+  const [upperBet, setUpperBet] = useState(false);
+  const [doubleBet, setDoubleBet] = useState(false);
+
+  let stakeAmount = 100;
+
+  const processOutcome = (dice1, dice2, total) => {
+    let winnings = 0;
+    if ((lowerBet && total <= 6) || (upperBet && total >= 7)) {
+      winnings += stakeAmount * 2;
+    }
+
+    if (dice1 == dice2) {
+      winnings += stakeAmount * 2;
+      if (lowerBet || upperBet) {
+        winnings *= 2;
+      }
+    }
+    setCurrentCash(currentCash + winnings);
+  };
 
   const rollHandler = () => {
     // setDiceTotal();
     diceNumeralA = rollDice(0, 7) - 1;
     diceNumeralB = rollDice(0, 7) - 1;
-    if (diceNumeralA == diceNumeralB) {
-      console.log('DOUBLE!!!!!!!');
-    }
     setDiceTotal(diceNumeralA + 1 + (diceNumeralB + 1));
     setDiceNumberA(`dice-${diceRolls[diceNumeralA]}`);
     setDiceNumberB(`dice-${diceRolls[diceNumeralB]}`);
+    console.log('🎲 > ', diceNumeralA, diceNumeralB, diceTotal);
+    processOutcome(diceNumeralA, diceNumeralB, diceTotal);
+  };
+
+  const doubleHandler = () => {
+    if (doubleBet) {
+      setDoubleBet(false);
+    } else {
+      setDoubleBet(true);
+    }
+    console.log(
+      '❓ >>',
+      lowerBet,
+      upperBet,
+      doubleBet,
+      diceNumberA,
+      diceNumberB
+    );
+  };
+
+  const lowerNumbersHandler = () => {
+    // ! cannot bet on upper numbers and lower numbers
+    if (lowerBet) {
+      setLowerBet(false);
+    } else {
+      setLowerBet(true);
+    }
+    if (upperBet) {
+      setUpperBet(false);
+    }
+    console.log(
+      '❓ >>',
+      lowerBet,
+      upperBet,
+      doubleBet,
+      diceNumberA,
+      diceNumberB
+    );
+  };
+
+  const upperNumbersHandler = () => {
+    // ! cannot bet on upper numbers and lower numbers
+    if (upperBet) {
+      setUpperBet(false);
+    } else {
+      setUpperBet(true);
+    }
+    if (lowerBet) {
+      setLowerBet(false);
+    }
+    console.log(
+      '❓ >>',
+      lowerBet,
+      upperBet,
+      doubleBet,
+      diceNumberA,
+      diceNumberB
+    );
   };
 
   return (
@@ -42,7 +117,14 @@ export default function GameScreen({ backScreen }) {
         <View style={styles.cashStyle}>
           <Title>£{currentCash}</Title>
         </View>
-        <BettingButtons />
+        <BettingButtons
+          lowerBet={lowerBet}
+          upperBet={upperBet}
+          doubleBet={doubleBet}
+          lowerNumbersPressed={lowerNumbersHandler}
+          upperNumbersPressed={upperNumbersHandler}
+          doublePressed={doubleHandler}
+        />
         <View style={styles.backButton}>
           <MainButton whenPressed={rollHandler} buttonText={'ROLL!'} />
           <Pressable onPress={backScreen}>
