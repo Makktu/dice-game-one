@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Alert } from 'react-native';
 import Title from '../components/Title';
 import Dice from '../components/Dice';
 import MainButton from '../components/MainButton';
@@ -7,98 +7,93 @@ import React, { useEffect, useState } from 'react';
 import rollDice from '../helpers/rollDice';
 
 const diceRolls = ['one', 'two', 'three', 'four', 'five', 'six'];
+let lower = false;
+let upper = false;
+let double = false;
 
 export default function GameScreen({ backScreen }) {
   const [currentCash, setCurrentCash] = useState(1000);
   const [diceTotal, setDiceTotal] = useState(0);
   const [diceNumberA, setDiceNumberA] = useState('dice-six');
   const [diceNumberB, setDiceNumberB] = useState('dice-six');
-  const [lowerBet, setLowerBet] = useState(false);
-  const [upperBet, setUpperBet] = useState(false);
-  const [doubleBet, setDoubleBet] = useState(false);
+  const [turnsTaken, setTurnsTaken] = useState(0);
+  const [stakeAmount, setStakeAmount] = useState(100);
 
-  let stakeAmount = 100;
-
-  const processOutcome = (dice1, dice2, total) => {
+  const processOutcome = (rolledA, rolledB) => {
+    console.log(lower, upper, double);
+    let playerRolled = rolledA + rolledB;
     let winnings = 0;
-    if ((lowerBet && total <= 6) || (upperBet && total >= 7)) {
+    let amountStaked = 0;
+    if (lower || upper) amountStaked += stakeAmount;
+    if (double) amountStaked += stakeAmount;
+    if (amountStaked > currentCash) {
+      console.log('not enough cash for that bet');
+      return;
+    }
+    setCurrentCash(currentCash - amountStaked);
+    if ((lower && playerRolled <= 6) || (upper && playerRolled >= 7)) {
       winnings += stakeAmount * 2;
     }
 
-    if (dice1 == dice2) {
+    if (rolledA == rolledB && double) {
       winnings += stakeAmount * 2;
-      if (lowerBet || upperBet) {
+      if ((lower && playerRolled <= 6) || (upper && playerRolled >= 7)) {
         winnings *= 2;
+        console.log('DOUBLE PLUS BET!');
       }
     }
-    setCurrentCash(currentCash + winnings);
+    setTurnsTaken(turnsTaken + 1);
+    console.log(stakeAmount);
+    if (turnsTaken == 3) {
+      setTurnsTaken(0);
+      setStakeAmount(stakeAmount * 2);
+      Alert.alert(
+        `Stake amount increasing to ${stakeAmount * 2}!`,
+        'Stake will double every 3 turns...'
+      );
+    }
+    if (winnings) setCurrentCash(currentCash + winnings);
   };
 
   const rollHandler = () => {
-    // setDiceTotal();
-    diceNumeralA = rollDice(0, 7) - 1;
-    diceNumeralB = rollDice(0, 7) - 1;
-    setDiceTotal(diceNumeralA + 1 + (diceNumeralB + 1));
-    setDiceNumberA(`dice-${diceRolls[diceNumeralA]}`);
-    setDiceNumberB(`dice-${diceRolls[diceNumeralB]}`);
-    console.log('🎲 > ', diceNumeralA, diceNumeralB, diceTotal);
-    processOutcome(diceNumeralA, diceNumeralB, diceTotal);
+    //>> return if no bet placed
+    if (!lower && !upper && !double) {
+      // ! replace with Alert
+      Alert.alert(
+        'No bet has been placed!',
+        'Place a bet by tapping one of the Betting buttons'
+      );
+      return;
+    }
+
+    //>> gets random roll 1-6 both dice
+    let rolledA = rollDice(0, 7);
+    let rolledB = rollDice(0, 7);
+    let rolledTotal = rolledA + rolledB;
+    console.log('🎲', rolledA, '🎲', rolledB, '🎲🎲 =', rolledTotal);
+
+    //>> update diceTotal state
+    setDiceTotal(rolledTotal);
+
+    //>> update dice graphical display
+    setDiceNumberA(`dice-${diceRolls[rolledA - 1]}`);
+    setDiceNumberB(`dice-${diceRolls[rolledB - 1]}`);
+
+    //>> process the result
+    processOutcome(rolledA, rolledB);
   };
 
-  const doubleHandler = () => {
-    if (doubleBet) {
-      setDoubleBet(false);
-    } else {
-      setDoubleBet(true);
-    }
-    console.log(
-      '❓ >>',
-      lowerBet,
-      upperBet,
-      doubleBet,
-      diceNumberA,
-      diceNumberB
-    );
+  const doubleHandler = (doubleStatus) => {
+    console.log(doubleStatus);
+    double = doubleStatus;
   };
-
-  const lowerNumbersHandler = () => {
-    // ! cannot bet on upper numbers and lower numbers
-    if (lowerBet) {
-      setLowerBet(false);
-    } else {
-      setLowerBet(true);
-    }
-    if (upperBet) {
-      setUpperBet(false);
-    }
-    console.log(
-      '❓ >>',
-      lowerBet,
-      upperBet,
-      doubleBet,
-      diceNumberA,
-      diceNumberB
-    );
+  const lowerHandler = (lowerStatus) => {
+    console.log(lowerStatus);
+    lower = lowerStatus;
   };
-
-  const upperNumbersHandler = () => {
-    // ! cannot bet on upper numbers and lower numbers
-    if (upperBet) {
-      setUpperBet(false);
-    } else {
-      setUpperBet(true);
-    }
-    if (lowerBet) {
-      setLowerBet(false);
-    }
-    console.log(
-      '❓ >>',
-      lowerBet,
-      upperBet,
-      doubleBet,
-      diceNumberA,
-      diceNumberB
-    );
+  const upperHandler = (upperStatus) => {
+    console.log(upperStatus);
+    upper = upperStatus;
   };
 
   return (
@@ -118,12 +113,9 @@ export default function GameScreen({ backScreen }) {
           <Title>£{currentCash}</Title>
         </View>
         <BettingButtons
-          lowerBet={lowerBet}
-          upperBet={upperBet}
-          doubleBet={doubleBet}
-          lowerNumbersPressed={lowerNumbersHandler}
-          upperNumbersPressed={upperNumbersHandler}
-          doublePressed={doubleHandler}
+          lowerBetNotifier={lowerHandler}
+          upperBetNotifier={upperHandler}
+          doubleBetNotifier={doubleHandler}
         />
         <View style={styles.backButton}>
           <MainButton whenPressed={rollHandler} buttonText={'ROLL!'} />

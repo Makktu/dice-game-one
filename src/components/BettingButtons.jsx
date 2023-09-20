@@ -1,28 +1,63 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import MainButton from './MainButton';
 
 export default function BettingButtons({
-  lowerBet,
-  upperBet,
-  doubleBet,
-  lowerNumbersPressed,
-  upperNumbersPressed,
-  doublePressed,
+  lowerBetNotifier,
+  upperBetNotifier,
+  doubleBetNotifier,
 }) {
+  const [lowerBet, setLowerBet] = useState(false);
+  const [upperBet, setUpperBet] = useState(false);
+  const [doubleBet, setDoubleBet] = useState(false);
+
+  const doublePressedHandler = () => {
+    setDoubleBet(!doubleBet);
+    doubleBetNotifier(!doubleBet);
+  };
+
+  const lowerNumbersHandler = () => {
+    setLowerBet(!lowerBet);
+    if (upperBet) {
+      setUpperBet(false);
+      upperBetNotifier(!upperBet);
+    }
+    lowerBetNotifier(!lowerBet);
+    // ! cannot bet on upper numbers and lower numbers
+  };
+
+  const upperNumbersHandler = (betOnStatus) => {
+    // ! cannot bet on upper numbers and lower numbers
+    setUpperBet(!upperBet);
+    if (lowerBet) {
+      setLowerBet(false);
+      lowerBetNotifier(!lowerBet);
+    }
+    upperBetNotifier(!upperBet);
+  };
+
   return (
     <>
       <View>
-        <MainButton buttonText='1 to 6' whenPressed={lowerNumbersPressed} />
-        {lowerBet ? <Text>✅</Text> : null}
+        <MainButton
+          buttonText='1 to 6'
+          whenPressed={lowerNumbersHandler}
+          buttonColor={lowerBet}
+        />
       </View>
       <View>
-        <MainButton buttonText='7 to 12' whenPressed={upperNumbersPressed} />
-        {upperBet ? <Text>✅</Text> : null}
+        <MainButton
+          buttonText='7 to 12'
+          whenPressed={upperNumbersHandler}
+          buttonColor={upperBet}
+        />
       </View>
       <View>
-        <MainButton buttonText='DOUBLE' whenPressed={doublePressed} />
-        {doubleBet ? <Text>✅</Text> : null}
+        <MainButton
+          buttonText='DOUBLE'
+          whenPressed={doublePressedHandler}
+          buttonColor={doubleBet}
+        />
       </View>
     </>
   );
