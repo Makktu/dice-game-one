@@ -11,32 +11,36 @@ let lower = false;
 let upper = false;
 let double = false;
 
-export default function GameScreen({ backScreen }) {
+export default function GameScreen({ backScreen, gameOverScreen }) {
   const [currentCash, setCurrentCash] = useState(1000);
   const [diceTotal, setDiceTotal] = useState(0);
   const [diceNumberA, setDiceNumberA] = useState('dice-six');
   const [diceNumberB, setDiceNumberB] = useState('dice-six');
   const [turnsTaken, setTurnsTaken] = useState(0);
-  const [stakeAmount, setStakeAmount] = useState(100);
+  const [stakeAmount, setStakeAmount] = useState(250);
+  const [gameOver, setGameOver] = useState(false);
 
   const processOutcome = (rolledA, rolledB) => {
+    if (currentCash < stakeAmount) {
+      gameOverScreen();
+    }
     console.log(lower, upper, double);
     let playerRolled = rolledA + rolledB;
     let winnings = 0;
     let amountStaked = 0;
     if (lower || upper) amountStaked += stakeAmount;
     if (double) amountStaked += stakeAmount;
-    if (amountStaked > currentCash) {
-      console.log('not enough cash for that bet');
-      return;
-    }
+    // if (amountStaked > currentCash) {
+    //   console.log('not enough cash for that bet');
+    //   return;
+    // }
     setCurrentCash(currentCash - amountStaked);
     if ((lower && playerRolled <= 6) || (upper && playerRolled >= 7)) {
       winnings += stakeAmount * 2;
     }
 
     if (rolledA == rolledB && double) {
-      winnings += stakeAmount * 2;
+      winnings += winnings * 2;
       if ((lower && playerRolled <= 6) || (upper && playerRolled >= 7)) {
         winnings *= 2;
         console.log('DOUBLE PLUS BET!');
@@ -46,10 +50,10 @@ export default function GameScreen({ backScreen }) {
     console.log(stakeAmount);
     if (turnsTaken == 3) {
       setTurnsTaken(0);
-      setStakeAmount(stakeAmount * 2);
+      setStakeAmount(stakeAmount * 3);
       Alert.alert(
-        `Stake amount increasing to ${stakeAmount * 2}!`,
-        'Stake will double every 3 turns...'
+        `Stake amount increasing to ${stakeAmount * 3}!`,
+        'Stake will TREBLE every 3 turns...'
       );
     }
     if (winnings) setCurrentCash(currentCash + winnings);

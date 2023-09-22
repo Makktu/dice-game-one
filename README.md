@@ -14,3 +14,7 @@ A simple React Native Project using Expo
 - Total 6 or over
   4 - the player can bet on every outcome if desired
   5 - the goal of the game is to become a Millionaire (player can continue playing after that point if wished)
+
+  ***
+
+  next time - fix game over; sharpen visuals (have some visuals...)

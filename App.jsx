@@ -13,9 +13,9 @@ import GameScreen from './src/screens/GameScreen';
 
 export default function App() {
   const [gameOn, setGameOn] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
 
   const startGame = () => {
-    console.log('game starts...');
     setGameOn(true);
   };
 
@@ -31,7 +31,21 @@ export default function App() {
   );
 
   if (gameOn) {
-    activeScreen = <GameScreen backScreen={() => setGameOn(false)} />;
+    activeScreen = (
+      <GameScreen
+        backScreen={() => setGameOn(false)}
+        gameOverScreen={() => setGameOver(true)}
+      />
+    );
+  }
+
+  if (gameOver) {
+    activeScreen = (
+      <StartGameScreen
+        startGame={startGame}
+        showInstructions={showInstructions}
+      />
+    );
   }
 
   return (
