@@ -2,7 +2,11 @@ import { StyleSheet, Text, View, Pressable } from 'react-native';
 import React from 'react';
 import Title from '../components/Title';
 
-export default function StartGameScreen({ startGame, showInstructions }) {
+export default function StartGameScreen({
+  startGame,
+  showInstructions,
+  showAbout,
+}) {
   return (
     <>
       <Pressable onPress={startGame}>
@@ -15,7 +19,7 @@ export default function StartGameScreen({ startGame, showInstructions }) {
           <Title>How to play</Title>
         </View>
       </Pressable>
-      <Pressable onPress={() => console.log('About what???')}>
+      <Pressable onPress={showAbout}>
         <View style={styles.titleStyle}>
           <Title>About</Title>
         </View>

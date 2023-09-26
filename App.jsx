@@ -8,12 +8,15 @@ import {
   Pressable,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import About from './src/screens/About';
+
 import StartGameScreen from './src/screens/StartGameScreen';
 import GameScreen from './src/screens/GameScreen';
 
 export default function App() {
   const [gameOn, setGameOn] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [displayAbout, setDisplayAbout] = useState(false);
 
   const startGame = () => {
     setGameOn(true);
@@ -23,10 +26,15 @@ export default function App() {
     console.log('instructions...');
   };
 
+  const showAbout = () => {
+    setDisplayAbout(!displayAbout);
+  };
+
   let activeScreen = (
     <StartGameScreen
       startGame={startGame}
       showInstructions={showInstructions}
+      showAbout={showAbout}
     />
   );
 
@@ -37,6 +45,10 @@ export default function App() {
         gameOverScreen={() => setGameOver(true)}
       />
     );
+  }
+
+  if (displayAbout) {
+    activeScreen = <About returnToMain={showAbout} />;
   }
 
   if (gameOver) {
