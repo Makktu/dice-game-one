@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import About from './src/screens/About';
-
+import HowToPlay from './src/screens/HowToPlay';
 import StartGameScreen from './src/screens/StartGameScreen';
 import GameScreen from './src/screens/GameScreen';
 
@@ -17,17 +17,28 @@ export default function App() {
   const [gameOn, setGameOn] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [displayAbout, setDisplayAbout] = useState(false);
+  const [displayInstructions, setDisplayInstructions] = useState(false);
 
   const startGame = () => {
+    setGameOver(false);
     setGameOn(true);
   };
 
   const showInstructions = () => {
-    console.log('instructions...');
+    console.log('???');
+    setDisplayInstructions(!displayInstructions);
   };
 
   const showAbout = () => {
+    console.log('???');
     setDisplayAbout(!displayAbout);
+  };
+
+  const resetGame = () => {
+    setDisplayAbout(false);
+    setDisplayInstructions(false);
+    setGameOn(false);
+    setGameOver(true);
   };
 
   let activeScreen = (
@@ -42,9 +53,21 @@ export default function App() {
     activeScreen = (
       <GameScreen
         backScreen={() => setGameOn(false)}
-        gameOverScreen={() => setGameOver(true)}
+        gameOverScreen={resetGame}
       />
     );
+  } else {
+    activeScreen = (
+      <StartGameScreen
+        startGame={startGame}
+        showInstructions={showInstructions}
+        showAbout={showAbout}
+      />
+    );
+  }
+
+  if (displayInstructions) {
+    activeScreen = <HowToPlay returnToMain={showInstructions} />;
   }
 
   if (displayAbout) {

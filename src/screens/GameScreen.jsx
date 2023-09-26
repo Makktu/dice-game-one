@@ -21,42 +21,43 @@ export default function GameScreen({ backScreen, gameOverScreen }) {
   const [gameOver, setGameOver] = useState(false);
 
   const processOutcome = (rolledA, rolledB) => {
-    if (currentCash < stakeAmount) {
+    if (currentCash < stakeAmount || currentCash <= 0) {
+      Alert.alert(`GAME OVER`, 'You ran out of ＄＄＄');
       gameOverScreen();
     }
-    console.log(lower, upper, double);
     let playerRolled = rolledA + rolledB;
     let winnings = 0;
     let amountStaked = 0;
-    if (lower || upper) amountStaked += stakeAmount;
-    if (double) amountStaked += stakeAmount;
-    // if (amountStaked > currentCash) {
-    //   console.log('not enough cash for that bet');
-    //   return;
-    // }
+    if (lower || upper) {
+      amountStaked += stakeAmount;
+    }
+    if (double) {
+      amountStaked += stakeAmount;
+    }
     setCurrentCash(currentCash - amountStaked);
     if ((lower && playerRolled <= 6) || (upper && playerRolled >= 7)) {
       winnings += stakeAmount * 2;
     }
 
     if (rolledA == rolledB && double) {
-      winnings += winnings * 2;
-      if ((lower && playerRolled <= 6) || (upper && playerRolled >= 7)) {
-        winnings *= 2;
-        console.log('DOUBLE PLUS BET!');
-      }
+      console.log('this should be winning, so why isnt it???');
+      setCurrentCash(currentCash * 2);
+      // if ((lower && playerRolled <= 6) || (upper && playerRolled >= 7)) {
+      //   winnings *= 2;
+      // }
     }
     setTurnsTaken(turnsTaken + 1);
-    console.log(stakeAmount);
-    if (turnsTaken == 3) {
+    if (turnsTaken == 5) {
       setTurnsTaken(0);
       setStakeAmount(stakeAmount * 3);
       Alert.alert(
         `Stake amount increasing to ${stakeAmount * 3}!`,
-        'Stake will TREBLE every 3 turns...'
+        'Stake will TREBLE every 5 turns...'
       );
     }
-    if (winnings) setCurrentCash(currentCash + winnings);
+    if (winnings) {
+      setCurrentCash(currentCash + winnings);
+    }
   };
 
   const rollHandler = () => {
@@ -98,6 +99,10 @@ export default function GameScreen({ backScreen, gameOverScreen }) {
   const upperHandler = (upperStatus) => {
     console.log(upperStatus);
     upper = upperStatus;
+  };
+
+  const checkGameRunning = () => {
+    // if game running, query it?
   };
 
   return (
